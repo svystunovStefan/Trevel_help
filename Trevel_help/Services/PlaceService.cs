@@ -2,8 +2,9 @@
 using Trevel_help.Data;
 using Trevel_help.Models;
 using Trevel_help.Services.Interfaces;
-
-namespace Trevel_help.Services;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class PlaceService : IPlaceService
 {
@@ -15,10 +16,11 @@ public class PlaceService : IPlaceService
     }
 
     public async Task<List<Place>> GetByTripAsync(int tripId)
-        => await _context.Places
+    {
+        return await _context.Places
             .Where(p => p.TripId == tripId)
-            .Include(p => p.Photos)
             .ToListAsync();
+    }
 
     public async Task<Place> CreateAsync(Place place)
     {
@@ -26,4 +28,15 @@ public class PlaceService : IPlaceService
         await _context.SaveChangesAsync();
         return place;
     }
+
+    public async Task<bool> DeleteAsync(int placeId)
+    {
+        var place = await _context.Places.FindAsync(placeId);
+        if (place == null) return false;
+
+        _context.Places.Remove(place);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }
+

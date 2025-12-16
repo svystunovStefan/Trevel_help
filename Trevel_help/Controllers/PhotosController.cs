@@ -17,16 +17,22 @@ public class PhotosController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> Get(int tripId)
-        => Ok(await _service.GetByTripAsync(tripId));
+    {
+        var photos = await _service.GetByTripAsync(tripId);
+        return Ok(photos);
+    }
 
     [HttpPost]
     public async Task<IActionResult> Create(int tripId, Photo photo)
     {
-        photo.TripId = tripId;
-        return Ok(await _service.CreateAsync(photo));
+        var created = await _service.CreateAsync(photo);
+        return Ok(created);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
-        => await _service.DeleteAsync(id) ? NoContent() : NotFound();
+    {
+        var deleted = await _service.DeleteAsync(id);
+        return deleted ? NoContent() : NotFound();
+    }
 }

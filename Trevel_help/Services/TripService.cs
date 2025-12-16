@@ -30,5 +30,14 @@ public class TripService : ITripService
         await _context.SaveChangesAsync();
         return trip;
     }
-}
 
+    public async Task DeleteAsync(int id)
+    {
+        var trip = await _context.Trips.FindAsync(id);
+        if (trip != null)
+        {
+            _context.Trips.Remove(trip);
+            await _context.SaveChangesAsync();
+        }
+    }
+}

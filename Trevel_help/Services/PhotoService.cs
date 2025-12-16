@@ -1,6 +1,10 @@
-﻿using Trevel_help.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Trevel_help.Data;
 using Trevel_help.Models;
 using Trevel_help.Services.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Trevel_help.Services;
 
@@ -14,7 +18,17 @@ public class PhotoService : IPhotoService
     }
 
     public async Task<List<Photo>> GetByTripAsync(int tripId)
-        => _context.Photos.Where(p => p.TripId == tripId).ToList();
+    {
+        return await _context.Photos
+            .Include(p => p.Place)
+            .Where(p => p.Place.TripId == tripId)
+            .ToListAsync();
+    }
+
+    public async Task<Photo?> GetByIdAsync(int id)
+    {
+        return await _context.Photos.FindAsync(id);
+    }
 
     public async Task<Photo> CreateAsync(Photo photo)
     {
@@ -33,3 +47,4 @@ public class PhotoService : IPhotoService
         return true;
     }
 }
+

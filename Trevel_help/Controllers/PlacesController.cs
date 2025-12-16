@@ -1,28 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Trevel_help.Models;
 using Trevel_help.Services.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Trevel_help.Controllers;
-
-[ApiController]
-[Route("api/trips/{tripId}/places")]
-public class PlacesController : ControllerBase
+namespace Trevel_help.Controllers
 {
-    private readonly IPlaceService _service;
-
-    public PlacesController(IPlaceService service)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PlacesController : ControllerBase
     {
-        _service = service;
-    }
+        private readonly IPlaceService _service;
 
-    [HttpGet]
-    public async Task<IActionResult> Get(int tripId)
-        => Ok(await _service.GetByTripAsync(tripId));
+        public PlacesController(IPlaceService service)
+        {
+            _service = service;
+        }
 
-    [HttpPost]
-    public async Task<IActionResult> Create(int tripId, Place place)
-    {
-        place.TripId = tripId;
-        return Ok(await _service.CreateAsync(place));
+        [HttpGet("{tripId}")]
+        public async Task<ActionResult<List<Place>>> GetByTrip(int tripId)
+        {
+            var places = await _service.GetByTripAsync(tripId);
+            return Ok(places); 
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Place>> Create(Place place)
+        {
+            var created = await _service.CreateAsync(place);
+            return Ok(created); 
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var deleted = await _service.DeleteAsync(id);
+            return deleted ? NoContent() : NotFound();
+        }
     }
 }

@@ -6,4 +6,5 @@ public interface IPlaceService
 {
     Task<List<Place>> GetByTripAsync(int tripId);
     Task<Place> CreateAsync(Place place);
+    Task<bool> DeleteAsync(int id);
 }
